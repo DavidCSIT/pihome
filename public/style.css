@@ -1,0 +1,28 @@
+.rounded {
+    border-radius: 2rem !important;         
+}
+.box {
+    width: 300px;
+}
+p, h1, .btn {
+    font-family: 'Orbitron', sans-serif;
+}
+.btn {
+    font-family: 'Press Start 2P', cursive;
+    width: 200px;
+}
+.warm{
+    background-color: lightsalmon;
+}
+.hot{
+    background-color: red;  
+}
+.cool{
+    background-color: lavender;  
+}
+.cold{
+    background-color: lightblue;  
+}
+a {
+    text-decoration: none;           
+}

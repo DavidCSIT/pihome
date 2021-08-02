@@ -1,0 +1,5 @@
+config.py
+log.txt
+__pycache__/
+public/dbconfig.php
+

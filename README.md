@@ -1,6 +1,6 @@
 Auto Update Raspberry Pi
 
-nano update.sh 
+nano update.sh
     #!/bin/sh
     sudo apt-get update && sudo apt-get upgrade -y
     sudo rpi-update -y

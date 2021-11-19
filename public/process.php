@@ -4,7 +4,7 @@
     if (mysqli_connect_errno( )) die("Failed to connect to database");
 
     if (!empty($_POST["waternow"])){
-        exec("/home/pi/PiRainMaker/rainmaker.py 2");
+        exec($home . "/rainmaker.py");
         header('Location: http:/done.php');
     }
     elseif (!empty($_POST["skip1"]))

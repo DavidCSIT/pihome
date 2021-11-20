@@ -33,5 +33,6 @@ c.execute("INSERT INTO config VALUES ('temp', 20)")
 c.execute("INSERT INTO config VALUES ('humidity', 1)")
 c.execute("INSERT INTO config VALUES ('mintemp', 10)")
 c.execute("INSERT INTO config VALUES ('heating', 'F')")
+c.execute("INSERT INTO config VALUES ('watering', 'F')")
 
 conn.commit()

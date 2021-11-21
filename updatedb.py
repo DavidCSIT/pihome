@@ -11,7 +11,7 @@ conn = pymysql.connect(
     host='localhost')
 c = conn.cursor()
 
-c.execute("UPDATE config set value = -2 WHERE ID = 'skip'")
+c.execute("UPDATE config set value = -1 WHERE ID = 'skip'")
 
 conn.commit()
 

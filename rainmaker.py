@@ -9,13 +9,13 @@
        
 """
 # Importing configeration
-import config
+from config import *    #import configuration variables
 
 # Importing modules
 import spidev  # To communicate with SPI devices
 from numpy import interp  # To scale and inverse values
 from time import sleep  # To add delay
-# import RPi.GPIO as GPIO  # To communicate with the pi GPIO ports #
+import RPi.GPIO as GPIO  # To communicate with the pi GPIO ports 
 import pymysql  #connect and use Mysql DB
 from random import randint  # generate random number for testing
 import sys  # to access arguments
@@ -35,10 +35,10 @@ def record_forecast(configlocation="queenstown"):
     log_and_notify("Forecast Recording Started")
 
     # Connect to the database.
-    conn = pymysql.connect(db=config.DATABASE,
-        user=config.USER,
-        passwd=config.PASSWD,
-        host=config.HOST)
+    conn = pymysql.connect(db=DATABASE,
+        user=USER,
+        passwd=PASSWD,
+        host=HOST)
     c = conn.cursor()
     
     # Generate ForecastID
@@ -55,7 +55,7 @@ def record_forecast(configlocation="queenstown"):
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver", options=chrome_options)
-    url = "https://www.metservice.com/towns-cities/locations/" + config.LOCATION
+    url = "https://www.metservice.com/towns-cities/locations/" + LOCATION
     
     #connect to webpage download and format the content
     driver.get(url)
@@ -84,10 +84,10 @@ def get_forecast():
     """returns the latest forecast
     """
     # Connect to the database.
-    conn = pymysql.connect(db=config.DATABASE,
-        user=config.USER,
-        passwd=config.PASSWD,
-        host=config.HOST)
+    conn = pymysql.connect(db=DATABASE,
+        user=USER,
+        passwd=PASSWD,
+        host=HOST)
     c = conn.cursor()
 
     #get latest forecast
@@ -105,10 +105,10 @@ def measure_moisture(measurementNumber = 1,measurementDelay = 1.0):
     """
     
     # Connect to the database.
-    conn = pymysql.connect(db=config.DATABASE,
-        user=config.USER,
-        passwd=config.PASSWD,
-        host=config.HOST)
+    conn = pymysql.connect(db=DATABASE,
+        user=USER,
+        passwd=PASSWD,
+        host=HOST)
     c = conn.cursor()
     
     # Generate RecordingID
@@ -151,6 +151,16 @@ def measure_moisture(measurementNumber = 1,measurementDelay = 1.0):
 
 def open_valve(watering_time=1, control_pin=15):
     
+    # Connect to the database.
+    conn = pymysql.connect(db=DATABASE,
+        user=USER,
+        passwd=PASSWD,
+        host=HOST)
+    c = conn.cursor()
+    
+    #stop channel in use warning
+    GPIO.setwarnings(False)
+    
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(control_pin,GPIO.OUT)
         
@@ -172,7 +182,7 @@ def log_and_notify(message, important=True):
     print(message)
 
     #open the log file
-    txt = open(f'{config.HOME}log.txt', "a")
+    txt = open(f'{HOME}log.txt', "a")
 
     #log message
     log_time = datetime.now().strftime("%H.%M.%S")
@@ -180,8 +190,8 @@ def log_and_notify(message, important=True):
     txt.write(message)
 
     #email Send notification
-    if (config.PROD and important ):
-        for email in config.notification_list:
+    if (PROD and important ):
+        for email in NOTIFICATION_LIST:
             command = f"echo '{message}' | msmtp {email}"
             popen(command)  
         

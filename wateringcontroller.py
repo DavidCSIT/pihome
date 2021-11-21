@@ -17,7 +17,7 @@ def water_if_required() :
     data = c.fetchone()
     skip = int(data[1])
 
-    skip = -1
+    skip = -2
     print(skip)
 
     # get latest forecast
@@ -26,23 +26,21 @@ def water_if_required() :
     # Check if manual watering required
     if skip == -1:
         rainmaker.log_and_notify(f"Watering Started Manual watering Garden")
-        # rainmaker.open_valve(config.WATERING_TIME,15)
+        rainmaker.open_valve(WATERING_TIME,15)
         c.execute(f"UPDATE config set value='F' where id='heating';")
         conn.commit()
         c.execute(f"UPDATE config set value='0' where id='skip';")
         conn.commit()
     elif skip == -2:
         rainmaker.log_and_notify(f"Watering Started Manual watering Berries")
-        # rainmaker.open_valve(config.WATERING_TIME,21 )
+        rainmaker.open_valve(WATERING_TIME,21 )
         c.execute(f"UPDATE config set value='F' where id='heating';")
         conn.commit()
         c.execute(f"UPDATE config set value='0' where id='skip';")
         conn.commit()
     
         now = datetime.now()
-        
-
-    
+         
 
 water_if_required()
 

@@ -28,13 +28,20 @@ def water_if_required_scheduled() :
         c.execute(f"UPDATE config SET value = {skip - 1} WHERE id='skip'")
         conn.commit()
     else:
-        rainmaker.open_valve(WATERING_TIME,15)
-        c.execute(f"UPDATE config set value='0' where id='skip';")
-        conn.commit()
+        rainmaker.record_forecast()
 
-        rainmaker.open_valve(WATERING_TIME,21)
-        c.execute(f"UPDATE config set value='0' where id='skip';")
-        conn.commit()
+        forecasts = rainmaker.get_forecast()
+        
+        if sum(forecasts[:13]) < RAIN_FORECAST_12HRS_MIN:
+            rainmaker.open_valve(WATERING_TIME,15)
+            c.execute(f"UPDATE config set value='0' where id='skip';")
+            conn.commit()
+
+            rainmaker.open_valve(WATERING_TIME,21)
+            c.execute(f"UPDATE config set value='0' where id='skip';")
+            conn.commit()
+        else:
+            rainmaker.log_and_notify(f"no watering today there is {sum(forecasts[:13])} rain forecast in the next 12 hours")
 
     c.close()
     conn.close()

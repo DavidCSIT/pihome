@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <div class="border border-3 <?php if($heating=='T') echo 'border-danger'?> rounded mx-auto my-3 box">
+    <div class="border border-3 <?php if($watering=='T') echo 'border-success'?> rounded mx-auto my-3 box">
           <div class="col text-center">
                 <input type="submit" name="waterVegs" class="btn btn-primary btn-lg mt-3 mb-1" value="Water Vegs"> <br>
                 <input type="submit" name="waterBerries" class="btn btn-primary btn-lg mb-3" value="Water Berries"> <br>

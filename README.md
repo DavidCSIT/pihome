@@ -26,7 +26,7 @@ sudo mariadb
     create user pihome@localhost identified by 'SecurePasswordOfYourChoice'; 
     grant all on pihome.* to pihome@localhost;
 
-sudo pip3 install selenium beautifulsoup4 pymysql GPIO -y
+sudo pip3 install selenium beautifulsoup4 pymysql GPIO
 
 sudo apt install apache2 -y
 sudo apt install php libapache2-mod-php php-mysql -y

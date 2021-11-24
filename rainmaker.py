@@ -15,7 +15,7 @@ import config
 import spidev  # To communicate with SPI devices
 from numpy import interp  # To scale and inverse values
 from time import sleep  # To add delay
-import RPi.GPIO as GPIO  # To communicate with the pi GPIO ports ##
+# import RPi.GPIO as GPIO  # To communicate with the pi GPIO ports #
 import pymysql  #connect and use Mysql DB
 from random import randint  # generate random number for testing
 import sys  # to access arguments
@@ -25,8 +25,6 @@ from bs4 import BeautifulSoup #search and return required content from page
 from datetime import datetime # obtain and format dates and time
 from os import popen
 import os
-
-print (config.DATABASE)
 
 def record_forecast(configlocation="queenstown"):
     """gets the metservice forecast for the next 24 hours based on location provided
@@ -157,6 +155,7 @@ def open_valve(watering_time=1, control_pin=15):
     GPIO.setup(control_pin,GPIO.OUT)
         
     log_and_notify(f"Watering started for {watering_time} using {control_pin}")
+    c.execute(f"UPDATE config set value='T' where id='watering';")
 
     GPIO.output(control_pin,GPIO.HIGH)
 
@@ -166,6 +165,7 @@ def open_valve(watering_time=1, control_pin=15):
     GPIO.cleanup()
     
     log_and_notify(f"Watering ended")
+    c.execute(f"UPDATE config set value='F' where id='watering';")
 
 def log_and_notify(message, important=True):
     #log print message to the console 

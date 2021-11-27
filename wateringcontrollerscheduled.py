@@ -15,7 +15,7 @@ def water_if_required_scheduled() :
     c = conn.cursor()
 
     # get latest forecast
-    forecasts = rainmaker.get_forecast()
+     #forecasts = rainmaker.get_forecast()
 
     # load latest user input if any
     c.execute("SELECT * from config where id='skip'")
@@ -47,4 +47,3 @@ def water_if_required_scheduled() :
     conn.close()
 
 water_if_required_scheduled()
-

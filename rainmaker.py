@@ -157,16 +157,15 @@ def open_valve(watering_time=1, control_pin=15):
         passwd=PASSWD,
         host=HOST)
     c = conn.cursor()
-    
-    #stop channel in use warning
-    GPIO.setwarnings(False)
-    
+         
+    log_and_notify(f"Watering started for {watering_time} mins using pin {control_pin}")
+    c.execute(f"UPDATE config set value='T' where id='watering';")
+    conn.commit()
+        
+    watering_time=watering_time * 60     #convert to seconds
+    GPIO.setwarnings(False)              #stop channel in use warning    
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(control_pin,GPIO.OUT)
-        
-    log_and_notify(f"Watering started for {watering_time} using {control_pin}")
-    c.execute(f"UPDATE config set value='T' where id='watering';")
-
     GPIO.output(control_pin,GPIO.HIGH)
 
     sleep(watering_time)
@@ -176,6 +175,7 @@ def open_valve(watering_time=1, control_pin=15):
     
     log_and_notify(f"Watering ended")
     c.execute(f"UPDATE config set value='F' where id='watering';")
+    conn.commit()
 
 def log_and_notify(message, important=True):
     #log print message to the console 
@@ -186,7 +186,7 @@ def log_and_notify(message, important=True):
 
     #log message
     log_time = datetime.now().strftime("%H.%M.%S")
-    message = f"{log_time} {message}"
+    message = f"{log_time} {message} /n"
     txt.write(message)
 
     #email Send notification

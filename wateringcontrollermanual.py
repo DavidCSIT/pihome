@@ -21,13 +21,13 @@ def water_if_required_manual() :
 
     # Check if manual watering required
     if skip == -1:
-        rainmaker.open_valve(WATERING_TIME,15)
-        c.execute(f"UPDATE config set value='0' where id='skip';")
+        c.execute(f"UPDATE config set value='0' where id='skip';")  
         conn.commit()
+        rainmaker.open_valve(WATERING_TIME,21)
     elif skip == -2:
-        rainmaker.open_valve(WATERING_TIME,21 )
         c.execute(f"UPDATE config set value='0' where id='skip';")
         conn.commit()
+        rainmaker.open_valve(WATERING_TIME,15)
     else:
         rainmaker.log_and_notify(f"Manual watering not required")
 

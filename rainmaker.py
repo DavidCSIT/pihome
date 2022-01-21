@@ -9,6 +9,7 @@
        
 """
 # Importing configeration
+import logging
 from config import *    #import configuration variables
 
 # Importing modules
@@ -25,6 +26,13 @@ from bs4 import BeautifulSoup #search and return required content from page
 from datetime import datetime # obtain and format dates and time
 from os import popen
 import os
+
+# Log to file in production on screen for test
+if (PROD):
+    logging.basicConfig(filename='io.log', level=logging.INFO, format='%(asctime)s %(message)s')
+else:
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s TEST %(message)s') 
+
 
 def record_forecast(configlocation="queenstown"):
     """gets the metservice forecast for the next 24 hours based on location provided
@@ -93,6 +101,7 @@ def get_forecast():
     #get latest forecast
     c.execute(f"SELECT rain FROM Forecast WHERE ForecastID = (SELECT MAX(ForecastID) from Forecast);")
     forecasts = [item[0] for item in c.fetchall()]
+    
 
     return forecasts
 
@@ -178,23 +187,26 @@ def open_valve(watering_time=1, control_pin=15):
     conn.commit()
 
 def log_and_notify(message, important=True):
-    #log print message to the console 
-    print(message)
-
-    #open the log file
-    txt = open(f'{HOME}log.txt', "a")
-
-    #log message
-    log_time = datetime.now().strftime("%H.%M.%S")
-    message = f"{log_time} {message} /n"
-    txt.write(message)
+    logging.info(message)
 
     #email Send notification
     if (PROD and important ):
         for email in NOTIFICATION_LIST:
             command = f"echo '{message}' | msmtp {email}"
             popen(command)  
-        
+
+def create_db_connection():
+    conn: None
+    try:
+        conn = pymysql.connect(
+        db=DATABASE,    
+        user=USER,
+        passwd=PASSWD,
+        host='localhost')
+    except logging.error as err:
+        print(f"Error: '{err}'")
+    return conn
+
 #test functions
 #print(get_forecast())
 #open_valve()

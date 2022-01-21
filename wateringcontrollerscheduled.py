@@ -5,45 +5,31 @@ import sys              #capture arguments
 import pymysql
 from time import sleep
 
-def water_if_required_scheduled() :
+# load latest user input if any
+conn = rainmaker.create_db_connection()
+c = conn.cursor() 
+c.execute("SELECT * from config where id='skip'")
+data = c.fetchone()
+skip = int(data[1])
 
-    # Connect to the database.
-    conn = pymysql.connect(db=DATABASE,
-        user=USER,
-        passwd=PASSWD,
-        host=HOST)
-    c = conn.cursor()
+# check if this watering should be skipped
+if skip > 0:
+    rainmaker.log_and_notify(f"no watering today skipping {skip - 1} more watering")
+    c.execute(f"UPDATE config SET value = {skip - 1} WHERE id='skip'")
+    conn.commit()
+else:
+    rainmaker.record_forecast()
+    forecasts = rainmaker.get_forecast()
+    
+    if sum(forecasts[:13]) < RAIN_FORECAST_12HRS_MIN:
+        rainmaker.open_valve(WATERING_TIME,15)
 
-    # get latest forecast
-     #forecasts = rainmaker.get_forecast()
-
-    # load latest user input if any
-    c.execute("SELECT * from config where id='skip'")
-    data = c.fetchone()
-    skip = int(data[1])
-
-    # check if this watering should be skipped
-    if skip > 2:
-        rainmaker.log_and_notify(f"no watering today skipping {skip - 1} more watering")
-        c.execute(f"UPDATE config SET value = {skip - 1} WHERE id='skip'")
-        conn.commit()
+        # open 2nd valve
+        # rainmaker.open_valve(WATERING_TIME,21)
+        # c.execute(f"UPDATE config set value='0' where id='skip';")
+        # conn.commit()
     else:
-        rainmaker.record_forecast()
+        rainmaker.log_and_notify(f"no watering today there is {sum(forecasts[:13])} rain forecast in the next 12 hours")
 
-        forecasts = rainmaker.get_forecast()
-        
-        if sum(forecasts[:13]) < RAIN_FORECAST_12HRS_MIN:
-            rainmaker.open_valve(WATERING_TIME,15)
-            c.execute(f"UPDATE config set value='0' where id='skip';")
-            conn.commit()
-
-            rainmaker.open_valve(WATERING_TIME,21)
-            c.execute(f"UPDATE config set value='0' where id='skip';")
-            conn.commit()
-        else:
-            rainmaker.log_and_notify(f"no watering today there is {sum(forecasts[:13])} rain forecast in the next 12 hours")
-
-    c.close()
-    conn.close()
-
-water_if_required_scheduled()
+c.close()
+conn.close()

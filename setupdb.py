@@ -7,7 +7,7 @@ import pymysql
 conn = pymysql.connect(
     db='pihome',    
     user=config.USER,
-    passwd=config.PASSWD,
+    passwd=config.PASSWD, 
     host='localhost')
 c = conn.cursor()
 

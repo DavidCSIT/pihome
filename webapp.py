@@ -33,42 +33,37 @@ def index():
     if (config_dict['heating']=="T"):
         border_heating = "border-danger"
     
-    if (config_dict['watering']=="T" or config_dict['skip']=="-1" or config_dict['skip']=="-2") :
+    if (config_dict['watering']=="T" ) :
         border_watering = "border-success"
 
     return render_template('index.html', **locals())
 
 @app.route('/process', methods=['POST'])
 def override():
-
-    #update DB based on button pushed
-
-    button = request.form.get("button")
-    if (button=="Water Vegs"):
-        sql = "UPDATE config set value='-1' where id='skip';"
-    else:
-        sql = "UPDATE config set value='F' where id='watering';"
-
-    # if (!empty($_POST["waterVegs"]))
-    #     $sql = "UPDATE config set value='-1' where id='skip'";
-    # elseif (!empty($_POST["waterBerries"]))
-    #     $sql = "UPDATE config set value='-2' where id='skip'";
-    # elseif (!empty($_POST["skip1"]))
-    #     $sql = "UPDATE config set value='1' where id='skip'";
-    # elseif (!empty($_POST["skip2"]))
-    #     $sql = "UPDATE config set value='2' where id='skip'";
-    # elseif (!empty($_POST["heat1"]))
-    #     $sql = "UPDATE config set value='1' where id='override'";
-    # elseif (!empty($_POST["heat2"]))
-    #     $sql = "UPDATE config set value='2' where id='override'";
-    # else {
-    #     print("what?");
-    #     exit();
-    # }
-    
     conn = rainmaker.create_db_connection()
     c = conn.cursor() 
-    c.execute(sql)
+
+    #update DB based on button pushed
+    button = request.form.get("button")
+    if (button=="Water Vegs"):
+        c.execute("UPDATE config set value='-1' where id='skip';")
+        c.execute("UPDATE config set value='T' where id='watering';")
+    elif (button=="Water Berries"):
+        c.execute("UPDATE config set value='-2' where id='skip';")
+        c.execute("UPDATE config set value='T' where id='watering';")
+    elif (button=="Skip One"):
+        c.execute("UPDATE config set value='1' where id='skip';")
+    elif (button=="Skip Two"):
+        c.execute("UPDATE config set value='2' where id='skip';")  
+    elif (button=="Heat 1 Hour"):
+        c.execute("UPDATE config set value='1' where id='override';")  
+        c.execute("UPDATE config set value='T' where id='heating';")
+    elif (button=="Heat 2 Hours"):
+        c.execute("UPDATE config set value='2' where id='override';")
+        c.execute("UPDATE config set value='T' where id='heating';")  
+    else:
+        print ("button not found")
+
     conn.commit()
     c.close()
     conn.close()

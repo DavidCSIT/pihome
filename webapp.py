@@ -3,6 +3,7 @@
 # Importing configeration
 from datetime import time
 import config
+import socket
 
 # Importing supporting functions
 import rainmaker
@@ -25,9 +26,24 @@ def index():
         config_dict.update({x[0] : x[1]})
     c.close()
     conn.close()
+    
+    remote_ip_address = request.remote_addr
+    # host_name = request.host.split(':')[0]
+    # host_ip_address = request.host.split(':')[0]
+    server_network_ip_address = "10.170.180"
 
-    temp = config_dict["temp"]
-    min = config_dict["mintemp"]
+
+    remote_ip_address_array = remote_ip_address.split(".")
+    server_network_ip_address_array = server_network_ip_address.split(".")
+
+    print (remote_ip_address_array)
+    print (server_network_ip_address_array)
+
+    temp = remote_ip_address_array   
+    min = server_network_ip_address_array
+
+    # temp = config_dict["temp"]    
+    # min = config_dict["mintemp"]
     humidity = config_dict["humidity"]
 
     if (config_dict['heating']=="T"):
@@ -35,6 +51,7 @@ def index():
     
     if (config_dict['watering']=="T" ) :
         border_watering = "border-success"
+    
 
     return render_template('index.html', **locals())
 
